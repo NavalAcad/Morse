@@ -15,9 +15,11 @@ namespace Morse
         static void Main()
         {
             MorseCode morseCode = new MorseCode();
+            Database database = new Database();
+
             System.Windows.Forms.Application.EnableVisualStyles();
             System.Windows.Forms.Application.SetCompatibleTextRenderingDefault(false);
-            System.Windows.Forms.Application.Run(new Form1(morseCode));
+            System.Windows.Forms.Application.Run(new Form1(morseCode, database));
         }
     }
 }

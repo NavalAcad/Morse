@@ -11,42 +11,33 @@ using System.Windows.Forms;
 namespace Morse
 {
     /// <summary>
-    /// Class for the Saved Data option.
-    /// Displays the keys for the saved records.
-    /// Options for reading and deleting the saved records.
+    /// Class for reading the saved data from database by key.
+    /// Options for loading or deleting the records.
     /// </summary>
-    public partial class Form4 : Form
+    public partial class Form6 : Form
     {
-        private Form backForm;
-        private MorseCode morseCode;
+        private Form4 backForm;
+        private string key;
         private Database database;
+        private MorseCode morseCode;
 
-        public Form4(Form otherForm)
+        public Form6(Form4 otherForm)
         {
             InitializeComponent();
             this.backForm = otherForm;
 
         }
 
-        public Form4(Form otherForm, MorseCode morseCode, Database database)
+        public Form6(Form4 otherForm, MorseCode morseCode ,Database database, string key)
         {
             InitializeComponent();
             this.backForm = otherForm;
-            this.morseCode = morseCode;
             this.database = database;
-        }
+            this.key = key;
+            this.morseCode = morseCode;
 
-        /// <summary>
-        /// Gets all the data from the database and displays it
-        /// </summary>
-        public void ShowDatabase()
-        {
             var list = new List<string>();
-            foreach (KeyValuePair<string, string> pair  in this.database.GetAllRecords())
-            {
-                list.Add(pair.Key);
-            }
-
+            list.Add(this.database.GetRecord(key));
             listBox1.DataSource = list;
         }
 
@@ -79,48 +70,38 @@ namespace Morse
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void button1_Click(object sender, EventArgs e)
+        private void button3_Click(object sender, EventArgs e)
         {
             this.backForm.Show();
             this.Hide();
         }
 
         /// <summary>
-        /// Read button.
-        /// Opens a new Form where the text behind the key is displayed.
+        /// Delete button.
+        /// Deletes the saved record from the database
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
         private void button2_Click(object sender, EventArgs e)
         {
-            string key = listBox1.SelectedItem.ToString();
-            Form6 dialog = new Form6(this, this.morseCode ,this.database, key);
-            dialog.Show();
+            this.database.DeleteRecord(this.key);
+            this.backForm.Show();
+            this.backForm.ShowDatabase();
             this.Hide();
         }
 
         /// <summary>
-        /// Delete button.
-        /// Deletes the saved record from the database.
+        /// Load button.
+        /// Loads the text in the Send Morse Code option.
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void button3_Click(object sender, EventArgs e)
+        private void button1_Click(object sender, EventArgs e)
         {
-            string key = listBox1.SelectedItem.ToString();
-            this.database.DeleteRecord(key);
-            ShowDatabase();
+            string text = listBox1.Text;
+            Form2 sendForm = new Form2(this, this.morseCode, this.database, text);
+            sendForm.Show();
+            this.Hide();
         }
-
-        /// <summary>
-        /// Displays the content of the database when the Form is loaded
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void Form4_Load(object sender, EventArgs e)
-        {
-            ShowDatabase();
-        }
-
     }
 }
